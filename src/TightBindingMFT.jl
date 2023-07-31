@@ -52,19 +52,13 @@ module TBMFT
     end
 
     ##### /// TODO: Add Free Hopping energies also 
-    ##### TODO: Test!!!!
+    ##### /// TODO: Test!!!!
     function GetMFTEnergy(tbMFT::TightBindingMFT{T}) :: Float64 where {T}
 
         Energy      =   0.0
         lookup      =   Lookup(tbMFT.TightBindingModel.uc)
 
         for BondKey in keys(lookup)
-            # base, target, offset    =   BondKey
-            
-            # index       =   mod.((-offset) , tbMFT.TightBindingModel.bz.gridSize) .+ ones(Int64, length(offset)) 
-            # ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
-            # b1          =   tbMFT.TightBindingModel.uc.localDim * (base   - 1) + 1
-            # b2          =   tbMFT.TightBindingModel.uc.localDim * (target - 1) + 1
 
             G_ij        =   GetBondCoorelation(tbMFT.TightBindingModel.Gr, BondKey..., tbMFT.TightBindingModel.uc, tbMFT.TightBindingModel.bz)
 

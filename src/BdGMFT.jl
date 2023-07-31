@@ -72,11 +72,6 @@ module BDGMFT
         PairingLookup      =   Lookup(bdgMFT.bdgModel.uc_pair)
 
         for BondKey in keys(HoppingLookup)
-            # base, target, offset    =   BondKey
-
-            # index       =   mod.((-offset) , bdgMFT.bdgModel.bz.gridSize) .+ ones(Int64, length(offset)) 
-            # b1          =   bdgMFT.bdgModel.uc_hop.localDim * (base   - 1) + 1
-            # b2          =   bdgMFT.bdgModel.uc_hop.localDim * (target - 1) + 1
 
             G_ij        =   GetBondCoorelation(bdgMFT.bdgModel.Gr, BondKey..., bdgMFT.bdgModel.uc_hop, bdgMFT.bdgModel.bz)
             t_ij        =   HoppingLookup[BondKey]
@@ -85,12 +80,6 @@ module BDGMFT
         end
 
         for BondKey in keys(PairingLookup)
-
-            # base, target, offset    =   BondKey
-            
-            # index       =   mod.((-offset) , bdgMFT.bdgModel.bz.gridSize) .+ ones(Int64, length(offset)) 
-            # b1          =   bdgMFT.bdgModel.uc_hop.localDim * (base   - 1) + 1
-            # b2          =   bdgMFT.bdgModel.uc_hop.localDim * (target - 1) + 1
 
             F_ij        =   GetBondCoorelation(bdgMFT.bdgModel.Fr, BondKey..., bdgMFT.bdgModel.uc_pair, bdgMFT.bdgModel.bz)
             p_ij        =   PairingLookup[BondKey]

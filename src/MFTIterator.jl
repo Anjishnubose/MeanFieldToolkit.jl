@@ -15,11 +15,7 @@ module MFTIter
         strengths   =   Float64[] 
 
         for bond in param.unitBonds
-
-            # index       =   mod.((-bond.offset) , bz.gridSize) .+ ones(Int64, length(bond.offset)) 
-            # ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
-            # b1          =   uc.localDim * (bond.base   - 1) + 1
-            # b2          =   uc.localDim * (bond.target - 1) + 1
+            ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
 
             G           =   GetBondCoorelation(Gr, bond, uc, bz)
 
