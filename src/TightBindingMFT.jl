@@ -4,7 +4,7 @@ module TBMFT
 
     using TightBindingToolkit, LinearAlgebra, Logging
 
-    using ..MeanFieldToolkit.MFTBonds: GetBondDictionary
+    using ..MeanFieldToolkit.MFTBonds: GetBondCoorelation
     using ..MeanFieldToolkit.Blocks: ParamBlock
 
     mutable struct TightBindingMFT{T} 
@@ -59,13 +59,17 @@ module TBMFT
         lookup      =   Lookup(tbMFT.TightBindingModel.uc)
 
         for BondKey in keys(lookup)
+            # base, target, offset    =   BondKey
             
-            Expectations        =   GetBondDictionary(tbMFT.HoppingBlock.lookup, BondKey, tbMFT.HoppingBlock.uc.localDim)
+            # index       =   mod.((-offset) , tbMFT.TightBindingModel.bz.gridSize) .+ ones(Int64, length(offset)) 
+            # ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
+            # b1          =   tbMFT.TightBindingModel.uc.localDim * (base   - 1) + 1
+            # b2          =   tbMFT.TightBindingModel.uc.localDim * (target - 1) + 1
 
-            Chi_ij              =   get(Expectations, "ij", zeros(ComplexF64, repeat([tbmft.HoppingBlock.uc.localDim], 2)...))
-            t_ij                =   lookup[BondKey]
+            G_ij        =   GetBondCoorelation(tbMFT.TightBindingModel.Gr, BondKey..., tbMFT.TightBindingModel.uc, tbMFT.TightBindingModel.bz)
 
-            Energy              +=  sum((t_ij .* Chi_ij))
+            t_ij        =   lookup[BondKey]
+            Energy      +=  sum((t_ij .* G_ij))
         end
 
         return real(Energy) / length(tbMFT.HoppingBlock.uc.basis)

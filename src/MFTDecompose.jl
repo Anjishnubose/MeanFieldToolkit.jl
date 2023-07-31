@@ -4,10 +4,19 @@ module MFTDecompose
     using TightBindingToolkit, LinearAlgebra, Tullio
 
 
+@doc """
+```julia
+InterQuarticToHopping(Uij::Array{ComplexF64, 4}, Chis::Dict{String, Matrix{ComplexF64}}) --> Dict{String, Matrix{ComplexF64}}
+```
+Function to decompose a general density-type, inter-site quartic interaction into MFT hopping channels (both inter-site and on-site).
+The interaction is provided as a rank-4 array living on the bond.
+The expectation values as a dictionary of matrices containing the expectation values on the two sites, i and j, and the bond i ↔ j with keys "ii", "jj", and "ij".
+
+"""
     function InterQuarticToHopping(Uij::Array{ComplexF64, 4}, Chis::Dict{String, Matrix{ComplexF64}}) :: Dict{String, Matrix{ComplexF64}}
         
         Chi_ij  =   Chis["ij"]
-        Chi_ii  =   Chis["ii"] ##### Had to unpack Chis in this manner because Tullio doesnt deal well with dictionaries.
+        Chi_ii  =   Chis["ii"] 
         Chi_jj  =   Chis["jj"]
 
         @tullio t_ij[ a , b]    :=   - conj(Chi_ij[c, d]) * Uij[a, c, d, b]
@@ -20,6 +29,15 @@ module MFTDecompose
     end
 
 
+@doc """
+```julia
+InterQuarticToPairing(Uij::Array{ComplexF64, 4}, Deltas::Dict{String, Matrix{ComplexF64}}) --> Dict{String, Matrix{ComplexF64}}
+```
+Function to decompose a general density-type, inter-site quartic interaction into MFT pairing channels.
+The interaction is provided as a rank-4 array living on the bond.
+The expectation values as a dictionary of matrices containing the expectation values on the two sites, i and j, and the bond i ↔ j with keys "ii", "jj", and "ij".
+
+"""
     function InterQuarticToPairing(Uij::Array{ComplexF64, 4}, Deltas::Dict{String, Matrix{ComplexF64}}) :: Dict{String, Matrix{ComplexF64}}
         
         Delta_ij    =  Deltas["ij"]
@@ -30,6 +48,15 @@ module MFTDecompose
     end
 
 
+@doc """
+```julia
+IntraQuarticToHopping(Uii::Array{ComplexF64, 4}, Chis::Dict{String, Matrix{ComplexF64}}) --> Dict{String, Matrix{ComplexF64}}
+```
+Function to decompose a general density-type, intra-site quartic interaction into MFT hopping channels.
+The interaction is provided as a rank-4 array living on the site.
+The expectation values as a dictionary of matrices containing the expectation values on the site, i with key "ii".
+
+"""
     function IntraQuarticToHopping(Uii::Array{ComplexF64, 4}, Chis::Dict{String, Matrix{ComplexF64}}) :: Dict{String, Matrix{ComplexF64}}
 
         Chi_ii =    Chis["ii"] 
@@ -40,6 +67,15 @@ module MFTDecompose
     end
 
 
+@doc """
+```julia
+IntraQuarticToHopping(Uii::Array{ComplexF64, 4}, Chis::Dict{String, Matrix{ComplexF64}}) --> Dict{String, Matrix{ComplexF64}}
+```
+Function to decompose a general density-type, intra-site quartic interaction into MFT pairing channels.
+The interaction is provided as a rank-4 array living on the site.
+The expectation values as a dictionary of matrices containing the expectation values on the site, i with key "ii".
+
+"""
     function IntraQuarticToPairing(Uii::Array{ComplexF64, 4}, Deltas::Dict{String, Matrix{ComplexF64}}) :: Dict{String, Matrix{ComplexF64}}
 
         Delta_ii =    Deltas["ii"] 

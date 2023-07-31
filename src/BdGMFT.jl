@@ -4,7 +4,7 @@ module BDGMFT
 
     using TightBindingToolkit, LinearAlgebra, Logging
 
-    using ..MeanFieldToolkit.MFTBonds: GetBondDictionary
+    using ..MeanFieldToolkit.MFTBonds: GetBondCoorelation
     using ..MeanFieldToolkit.Blocks: ParamBlock
 
     import ..MeanFieldToolkit.TBMFT: GetMFTEnergy
@@ -72,23 +72,30 @@ module BDGMFT
         PairingLookup      =   Lookup(bdgMFT.bdgModel.uc_pair)
 
         for BondKey in keys(HoppingLookup)
-            
-            Expectations        =   GetBondDictionary(bdgMFT.HoppingBlock.lookup, BondKey, bdgMFT.HoppingBlock.uc.localDim)
+            # base, target, offset    =   BondKey
 
-            Chi_ij              =   get(Expectations, "ij", zeros(ComplexF64, repeat([bdgMFT.HoppingBlock.uc.localDim], 2)...))
-            t_ij                =   HoppingLookup[BondKey]
+            # index       =   mod.((-offset) , bdgMFT.bdgModel.bz.gridSize) .+ ones(Int64, length(offset)) 
+            # b1          =   bdgMFT.bdgModel.uc_hop.localDim * (base   - 1) + 1
+            # b2          =   bdgMFT.bdgModel.uc_hop.localDim * (target - 1) + 1
 
-            Energy              +=  sum((t_ij .* Chi_ij))
+            G_ij        =   GetBondCoorelation(bdgMFT.bdgModel.Gr, BondKey..., bdgMFT.bdgModel.uc_hop, bdgMFT.bdgModel.bz)
+            t_ij        =   HoppingLookup[BondKey]
+
+            Energy      +=  sum((t_ij .* G_ij))
         end
 
         for BondKey in keys(PairingLookup)
+
+            # base, target, offset    =   BondKey
             
-            Expectations        =   GetBondDictionary(bdgMFT.PairingBlock.lookup, BondKey, bdgMFT.PairingBlock.uc.localDim)
+            # index       =   mod.((-offset) , bdgMFT.bdgModel.bz.gridSize) .+ ones(Int64, length(offset)) 
+            # b1          =   bdgMFT.bdgModel.uc_hop.localDim * (base   - 1) + 1
+            # b2          =   bdgMFT.bdgModel.uc_hop.localDim * (target - 1) + 1
 
-            Delta_ij            =   get(Expectations, "ij", zeros(ComplexF64, repeat([bdgMFT.PairingBlock.uc.localDim], 2)...))
-            p_ij                =   PairingLookup[BondKey]
+            F_ij        =   GetBondCoorelation(bdgMFT.bdgModel.Fr, BondKey..., bdgMFT.bdgModel.uc_pair, bdgMFT.bdgModel.bz)
+            p_ij        =   PairingLookup[BondKey]
 
-            Energy              +=  sum((p_ij .* Delta_ij))
+            Energy      +=  sum((p_ij .* F_ij))
         end
 
         return real(Energy) / length(bdgMFT.HoppingBlock.uc.basis)

@@ -6,7 +6,7 @@ module MeanFieldToolkit
 
     include("MFTBonds.jl")
     using .MFTBonds
-    export GetMFTBonds, GetBondDictionary
+    export GetBondCoorelation, GetMFTBonds, GetBondDictionary
 
     include("MFTEnergies.jl")
     using .MFTEnergies

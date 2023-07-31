@@ -1,7 +1,29 @@
 module MFTBonds
-    export GetMFTBonds, GetBondDictionary
+    export GetBondCoorelation, GetMFTBonds, GetBondDictionary
 
     using TightBindingToolkit, LinearAlgebra, Tullio
+
+
+    function GetBondCoorelation(Gr::Array{Matrix{ComplexF64}, T}, base::Int64, target::Int64, offset::Vector{Int64}, uc::UnitCell, bz::BZ) :: Matrix{ComplexF64} where {T}
+        index       =   mod.((-offset) , bz.gridSize) .+ ones(Int64, length(offset)) 
+        ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
+        b1          =   uc.localDim * (base   - 1) + 1
+        b2          =   uc.localDim * (target - 1) + 1
+
+        G           =   Gr[index...][b1 : b1 + uc.localDim - 1, b2 : b2 + uc.localDim - 1]
+        return G
+    end
+
+    function GetBondCoorelation(Gr::Array{Matrix{ComplexF64}, T}, bond::Bond, uc::UnitCell, bz::BZ) :: Matrix{ComplexF64} where {T}
+        index       =   mod.((-bond.offset) , bz.gridSize) .+ ones(Int64, length(bond.offset)) 
+        ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
+        b1          =   uc.localDim * (bond.base   - 1) + 1
+        b2          =   uc.localDim * (bond.target - 1) + 1
+
+        G           =   Gr[index...][b1 : b1 + uc.localDim - 1, b2 : b2 + uc.localDim - 1]
+        return G
+    end
+
 
     function GetBondDictionary(BondLookup::Dict{Tuple, Matrix{ComplexF64}}, BondKey::Tuple{Int64, Int64, Vector{Int64}}, localDim::Int64) :: Dict{String, Matrix{ComplexF64}}
         base, target, offset    =   BondKey
