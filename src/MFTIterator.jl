@@ -35,7 +35,7 @@ module MFTIter
 
         BuildFromInteractions!(tbMFT)
 
-        H       =   Hamiltonian(tbMFT.TightBindingModel.uc, tbMFT.TightBindingModel.bz ; OnSiteMatrices = OnSiteMatrices)
+        H       =   Hamiltonian(tbMFT.TightBindingModel.uc, tbMFT.TightBindingModel.bz)
         DiagonalizeHamiltonian!(H)
 
         tbMFT.TightBindingModel.Ham     =   H
@@ -59,7 +59,7 @@ module MFTIter
 
         BuildFromInteractions!(bdgMFT)
 
-        H       =   Hamiltonian(bdgMFT.bdgModel.uc_hop, bdgMFT.bdgModel.uc_pair, bdgMFT.bdgModel.bz ; OnSiteMatrices = OnSiteMatrices)
+        H       =   Hamiltonian(bdgMFT.bdgModel.uc_hop, bdgMFT.bdgModel.uc_pair, bdgMFT.bdgModel.bz)
         DiagonalizeHamiltonian!(H)
 
         bdgMFT.bdgModel.Ham     =   H
