@@ -3,22 +3,21 @@ module Blocks
 
     using TightBindingToolkit
 
-    mutable struct ParamBlock{T}
+    mutable struct ParamBlock{T, R}
 
-        params      ::  Vector{Param{T}}
+        params      ::  Vector{Param{T, R}}
         uc          ::  UnitCell{T}
         lookup      ::  Dict{Tuple, Array{ComplexF64, T}}
 
-        function ParamBlock(params::Vector{Param{T}}, uc::UnitCell{T}) where {T}
+        function ParamBlock(params::Vector{Param{T, R}}, uc::UnitCell{T}) where {T, R}
             ModifyUnitCell!(uc, params)
             lookup  =   Lookup(uc)
-            return new{T}(params, uc, lookup)
+            return new{T, R}(params, uc, lookup)
         end
     end
 
 
-    
-    function UpdateBlock!(Block::ParamBlock{T}) where {T}
+    function UpdateBlock!(Block::ParamBlock{T, R}) where {T, R}
         ModifyUnitCell!(Block.uc, Block.params)
         Block.lookup    =   Lookup(Block.uc)
     end
@@ -29,7 +28,7 @@ module Blocks
         MotherParam     =   Param(1.0, T)
         AddIsotropicBonds!(MotherParam, uc, dist, mat, label ; checkOffsetRange = checkOffsetRange)
 
-        params  =   Param{T}[]
+        params  =   Param{T, Float64}[]
 
         for bond in MotherParam.unitBonds
             bondKey     =   (bond.base, bond.target, bond.offset)

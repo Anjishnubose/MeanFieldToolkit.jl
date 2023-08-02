@@ -8,13 +8,13 @@ module BDGMFT
     using ..MeanFieldToolkit.Blocks: ParamBlock
 
     import ..MeanFieldToolkit.TBMFT: GetMFTEnergy
-    mutable struct BdGMFT{T} 
+    mutable struct BdGMFT{T, R, S} 
         ##### The full BdG MFT Model, and the two blocks tracking hopping and pairing expectation values and order parameters.
         bdgModel                ::  BdGModel
-        HoppingBlock            ::  ParamBlock{2}
-        PairingBlock            ::  ParamBlock{2}
+        HoppingBlock            ::  ParamBlock{2, R}
+        PairingBlock            ::  ParamBlock{2, S}
         ##### The ParamBlock tracking information about the Interacting UnitCell, and the corresponding MFT decomposition functions for hopping and pairing
-        InteractionBlock        ::  Vector{ParamBlock{T}}
+        InteractionBlock        ::  Vector{ParamBlock{T, Float64}}
         HoppingDecomposition    ::  Vector{Function}
         PairingDecomposition    ::  Vector{Function}
         ##### The MFT expectation value of the full interacting Hamiltonian
@@ -27,7 +27,7 @@ module BDGMFT
         PairingLabels           ::  Dict{String, String}
 
 
-        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2}, PairingBlock::ParamBlock{2}, InteractionBlock::Vector{ParamBlock{T}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T}
+        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2, R}, PairingBlock::ParamBlock{2, S}, InteractionBlock::Vector{ParamBlock{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
 
             @warn "Scaling attributes not passed. Resorting to default values of uniform relative scaling for every channel!"
             HoppingScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0)
@@ -36,28 +36,28 @@ module BDGMFT
             @assert IsSameUnitCell( bdgModel.uc_hop, HoppingBlock.uc) "Inconsistency between Tight-Binding Unit Cell and hopping Expectation Unit Cell"
             @assert IsSameUnitCell(bdgModel.uc_pair, PairingBlock.uc) "Inconsistency between Pairing Unit Cell and pairing Expectation Unit Cell"
 
-            return new{T}(bdgModel, HoppingBlock, PairingBlock, InteractionBlock, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
+            return new{T, R, S}(bdgModel, HoppingBlock, PairingBlock, InteractionBlock, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
 
         end
 
-        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2}, PairingBlock::ParamBlock{2}, InteractionBlock::Vector{ParamBlock{T}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function}, HoppingScaling::Dict{String, Float64}, PairingScaling::Dict{String, Float64} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T}
+        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2, R}, PairingBlock::ParamBlock{2, S}, InteractionBlock::Vector{ParamBlock{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function}, HoppingScaling::Dict{String, Float64}, PairingScaling::Dict{String, Float64} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
 
             @assert isSameUnitCell( bdgModel.uc_hop, HoppingUC) "Inconsistency between Tight-Binding Unit Cell and hopping Expectation Unit Cell"
             @assert isSameUnitCell(bdgModel.uc_pair, PairingUC) "Inconsistency between Pairing Unit Cell and pairing Expectation Unit Cell"
 
-            return new{T}(bdgModel, HoppingBlock, PairingBlock, InteractionBlock, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
+            return new{T, R, S}(bdgModel, HoppingBlock, PairingBlock, InteractionBlock, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
 
         end
 
-        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2}, PairingBlock::ParamBlock{2}, InteractionBlock::ParamBlock{T} , HoppingDecomposition::Function, PairingDecomposition::Function ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T}
+        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2, R}, PairingBlock::ParamBlock{2, S}, InteractionBlock::ParamBlock{T, Float64} , HoppingDecomposition::Function, PairingDecomposition::Function ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
 
-            return BdGMFT(bdgModel, HoppingBlock, PairingBlock, ParamBlock{T}[InteractionBlock], Function[HoppingDecomposition], Function[PairingDecomposition] ; HoppingLabels = HoppingLabels, PairingLabels = PairingLabels)
+            return BdGMFT(bdgModel, HoppingBlock, PairingBlock, ParamBlock{T, Float64}[InteractionBlock], Function[HoppingDecomposition], Function[PairingDecomposition] ; HoppingLabels = HoppingLabels, PairingLabels = PairingLabels)
 
         end
 
-        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2}, PairingBlock::ParamBlock{2}, InteractionBlock::ParamBlock{T} , HoppingDecomposition::Function, PairingDecomposition::Function, HoppingScaling::Dict{String, Float64}, PairingScaling::Dict{String, Float64} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T}
+        function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2, R}, PairingBlock::ParamBlock{2, S}, InteractionBlock::ParamBlock{T, Float64} , HoppingDecomposition::Function, PairingDecomposition::Function, HoppingScaling::Dict{String, Float64}, PairingScaling::Dict{String, Float64} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
 
-            return BdGMFT(bdgModel, HoppingBlock, PairingBlock, ParamBlock{T}[InteractionBlock], Function[HoppingDecomposition], Function[PairingDecomposition], HoppingScaling, PairingScaling ; HoppingLabels = HoppingLabels, PairingLabels = PairingLabels)
+            return BdGMFT(bdgModel, HoppingBlock, PairingBlock, ParamBlock{T, Float64}[InteractionBlock], Function[HoppingDecomposition], Function[PairingDecomposition], HoppingScaling, PairingScaling ; HoppingLabels = HoppingLabels, PairingLabels = PairingLabels)
 
         end
 
@@ -65,7 +65,7 @@ module BDGMFT
 
     ##### /// TODO: Add Free Hopping and pairing energies also
     ##### TODO: Test
-    function GetMFTEnergy(bdgMFT::BdGMFT{T}) :: Float64 where {T}
+    function GetMFTEnergy(bdgMFT::BdGMFT{T, R, S}) :: Float64 where {T, R, S}
 
         Energy             =   0.0
         HoppingLookup      =   Lookup(bdgMFT.bdgModel.uc_hop)

@@ -10,7 +10,7 @@ module Build
 
 
     ##### ///TODO: Add Free Hopping energies also
-    function BuildFromInteractions!(tbMFT::TightBindingMFT{T} ; refresh::Bool = true) where {T}
+    function BuildFromInteractions!(tbMFT::TightBindingMFT{T, R} ; refresh::Bool = true) where {T, R}
 
         if refresh
             labels 	=	getproperty.(tbMFT.TightBindingModel.uc.bonds, :label)
@@ -38,7 +38,7 @@ module Build
     end
 
     ##### ///TODO: Add Free Hopping and pairing energies also
-    function BuildFromInteractions!(bdgMFT::BdGMFT{T} ; refresh::Bool = true) where {T}
+    function BuildFromInteractions!(bdgMFT::BdGMFT{T, R, S} ; refresh::Bool = true) where {T, R, S}
 
         if refresh
             labels 	=	getproperty.(bdgMFT.bdgModel.uc_hop.bonds, :label)

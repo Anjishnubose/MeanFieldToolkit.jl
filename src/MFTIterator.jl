@@ -9,26 +9,26 @@ module MFTIter
     using ..MeanFieldToolkit.BDGMFT: BdGMFT, GetMFTEnergy
     using ..MeanFieldToolkit.Build: BuildFromInteractions!
 
-    ##### TODO : Try to vectorize maybe?
-    function DecomposeGr(Gr::Array{Matrix{ComplexF64}, T}, param::Param{2}, uc::UnitCell{T}, bz::BZ) :: Float64 where {T}
+    #####/// TODO : Try to vectorize maybe? Literally no need
+    function DecomposeGr(Gr::Array{Matrix{ComplexF64}, T}, param::Param{2, R}, uc::UnitCell{T}, bz::BZ) :: R where {T, R <: Union{Float64, ComplexF64}}
 
-        strengths   =   Float64[] 
+        strengths   =   R[] 
 
         for bond in param.unitBonds
-            ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
 
             G           =   GetBondCoorelation(Gr, bond, uc, bz)
 
-            strength    =   real(tr( adjoint(bond.mat) * G) / (tr(adjoint(bond.mat) * bond.mat)))
+            decomposition   =   (tr( adjoint(bond.mat) * G) / (tr(adjoint(bond.mat) * bond.mat)))
+            strength        =   (R == Float64 ? real(decomposition) : decomposition)
+
             push!(strengths, strength)
         end
 
         return mean(strengths)
-
     end
 
 
-    function MFTIterator(Strengths::Vector{Float64}, tbMFT::TightBindingMFT{T} ; OnSiteMatrices::Vector{Matrix{ComplexF64}} = SpinMats((tbMFT.TightBindingModel.uc.localDim-1)//2)) :: Vector{Float64} where {T}
+    function MFTIterator(Strengths::Vector{R}, tbMFT::TightBindingMFT{T, R}) :: Vector{R} where {T, R <: Union{Float64, ComplexF64}}
 
         push!.( getproperty.(tbMFT.HoppingBlock.params, :value) , Strengths)
         UpdateBlock!(tbMFT.HoppingBlock)
@@ -48,7 +48,8 @@ module MFTIter
         return NewStrengths
     end
 
-    function MFTIterator(Strengths::Vector{Float64}, bdgMFT::BdGMFT{T} ; OnSiteMatrices::Vector{Matrix{ComplexF64}} = SpinMats((tbMFT.TightBindingModel.uc.localDim-1)//2)) :: Vector{Float64} where {T}
+
+    function MFTIterator(Strengths::Vector{R}, bdgMFT::BdGMFT{T, R, R}) :: Vector{Float64} where {T, R <: Union{Float64, ComplexF64}}
 
         push!.( getproperty.(bdgMFT.HoppingBlock.params, :value) , Strengths[begin : length(bdgMFT.HoppingBlock.params)])
         UpdateBlock!(bdgMFT.HoppingBlock)

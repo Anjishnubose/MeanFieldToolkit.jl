@@ -7,12 +7,12 @@ module TBMFT
     using ..MeanFieldToolkit.MFTBonds: GetBondCoorelation
     using ..MeanFieldToolkit.Blocks: ParamBlock
 
-    mutable struct TightBindingMFT{T} 
+    mutable struct TightBindingMFT{T, R} 
         ##### TightBinding Model for MFT, and the ParamBlock containing the expected order parameters of MFT
         TightBindingModel   ::  Model
-        HoppingBlock        ::  ParamBlock{2}
+        HoppingBlock        ::  ParamBlock{2, R}
         ##### The ParamBlock tracking information about the Interacting UnitCell, and the corresponding MFT decomposition functions
-        InteractionBlock    ::  Vector{ParamBlock{T}}
+        InteractionBlock    ::  Vector{ParamBlock{T, Float64}}
         MFTDecomposition    ::  Vector{Function}
         ##### The MFT expectation value of the full interacting Hamiltonian
         MFTEnergy           ::  Vector{Float64}
@@ -22,38 +22,38 @@ module TBMFT
         ChannelLabels       ::  Dict{String, String}
 
 
-        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2}, InteractionBlock::Vector{ParamBlock{T}} , MFTDecomposition::Vector{Function} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T}
+        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2, R}, InteractionBlock::Vector{ParamBlock{T, Float64}} , MFTDecomposition::Vector{Function} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
             @warn "`MFTScaling` attribute not passed. Resorting to default values of uniform relative scaling for every channel!"
             MFTScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0) 
 
             @assert IsSameUnitCell(TightBindingModel.uc, HoppingBlock.uc) "Inconsistency between Tight-Binding Unit Cell and Expectation Unit Cell"
 
-            return new{T}(TightBindingModel, HoppingBlock, InteractionBlock, MFTDecomposition, Float64[], MFTScaling, ChannelLabels)
+            return new{T, R}(TightBindingModel, HoppingBlock, InteractionBlock, MFTDecomposition, Float64[], MFTScaling, ChannelLabels)
         end
 
-        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2}, InteractionBlock::Vector{ParamBlock{T}}, MFTDecomposition::Vector{Function}, MFTScaling::Dict{String, Float64} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T}
+        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2, R}, InteractionBlock::Vector{ParamBlock{T, Float64}}, MFTDecomposition::Vector{Function}, MFTScaling::Dict{String, Float64} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
             @assert IsSameUnitCell(TightBindingModel.uc, HoppingBlock.uc) "Inconsistency between Tight-Binding Unit Cell and Expectation Unit Cell"
 
-            return new{T}(TightBindingModel, HoppingBlock, InteractionBlock, MFTDecomposition, Float64[], MFTScaling, ChannelLabels)
+            return new{T, R}(TightBindingModel, HoppingBlock, InteractionBlock, MFTDecomposition, Float64[], MFTScaling, ChannelLabels)
         end
 
-        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2}, InteractionBlock::ParamBlock{T} , MFTDecomposition::Function ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T}
+        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2, R}, InteractionBlock::ParamBlock{T, Float64} , MFTDecomposition::Function ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
-            return TightBindingMFT(TightBindingModel, HoppingBlock, ParamBlock{T}[InteractionBlock], Function[MFTDecomposition] ; ChannelLabels = ChannelLabels)
+            return TightBindingMFT(TightBindingModel, HoppingBlock, ParamBlock{T, Float64}[InteractionBlock], Function[MFTDecomposition] ; ChannelLabels = ChannelLabels)
         end
 
-        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2}, InteractionBlock::ParamBlock{T}, MFTDecomposition::Function, MFTScaling::Dict{String, Float64} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T}
+        function TightBindingMFT(TightBindingModel::Model, HoppingBlock::ParamBlock{2, R}, InteractionBlock::ParamBlock{T, Float64}, MFTDecomposition::Function, MFTScaling::Dict{String, Float64} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
-            return TightBindingMFT(TightBindingModel, HoppingBlock, ParamBlock{T}[InteractionBlock], Function[MFTDecomposition], MFTScaling; ChannelLabels = ChannelLabels)
+            return TightBindingMFT(TightBindingModel, HoppingBlock, ParamBlock{T, Float64}[InteractionBlock], Function[MFTDecomposition], MFTScaling; ChannelLabels = ChannelLabels)
         end
 
     end
 
     ##### /// TODO: Add Free Hopping energies also 
     ##### /// TODO: Test!!!!
-    function GetMFTEnergy(tbMFT::TightBindingMFT{T}) :: Float64 where {T}
+    function GetMFTEnergy(tbMFT::TightBindingMFT{T, R}) :: Float64 where {T, R}
 
         Energy      =   0.0
         lookup      =   Lookup(tbMFT.TightBindingModel.uc)
