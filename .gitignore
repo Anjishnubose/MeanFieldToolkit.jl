@@ -4,3 +4,6 @@
 *.jld2
 *.json
 *.npz
+Sample/SquaretJ/PlotData.jl
+Sample/KagomeDiracSL/PlotData.jl
+Sample/Altermagnetism/PlotData.jl
