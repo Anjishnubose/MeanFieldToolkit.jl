@@ -40,20 +40,20 @@ for filling in fillings
     DeltaUC         =   UnitCell([a1, a2], 2, 2)
     InteractionUC   =   UnitCell([a1, a2], 2, 4)
 
-    AddBasisSite!(HoppingUC, b1, InitialField)
-    AddBasisSite!(HoppingUC, b2, InitialField)
+    AddBasisSite!(HoppingUC, b1)
+    AddBasisSite!(HoppingUC, b2)
 
-    AddBasisSite!(PairingUC, b1, InitialField)
-    AddBasisSite!(PairingUC, b2, InitialField)
+    AddBasisSite!(PairingUC, b1)
+    AddBasisSite!(PairingUC, b2)
 
-    AddBasisSite!(ChiUC, b1, InitialField)
-    AddBasisSite!(ChiUC, b2, InitialField)
+    AddBasisSite!(ChiUC, b1)
+    AddBasisSite!(ChiUC, b2)
 
-    AddBasisSite!(DeltaUC, b1, InitialField)
-    AddBasisSite!(DeltaUC, b2, InitialField)
+    AddBasisSite!(DeltaUC, b1)
+    AddBasisSite!(DeltaUC, b2)
 
-    AddBasisSite!(InteractionUC, b1, InitialField)
-    AddBasisSite!(InteractionUC, b2, InitialField)
+    AddBasisSite!(InteractionUC, b1)
+    AddBasisSite!(InteractionUC, b2)
 
     ##### HoppingParams
     t1          =   -t*rnorm_hopping_factor
