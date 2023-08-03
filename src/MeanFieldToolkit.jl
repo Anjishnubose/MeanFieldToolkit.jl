@@ -36,6 +36,10 @@ module MeanFieldToolkit
     using .MFTRun
     export SolveMFT!
 
+    include("MFTResume.jl")
+    using .MFTResume
+    export ResumeMFT!
+
     include("MFTPlot.jl")
     using .MFTPlot
     export PlotMFT!, PlotMFTEnergy!
