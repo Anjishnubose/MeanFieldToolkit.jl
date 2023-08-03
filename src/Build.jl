@@ -2,7 +2,7 @@ module Build
 
     export BuildFromInteractions!
 
-    using LinearAlgebra, TightBindingToolkit
+    using LinearAlgebra, TightBindingToolkit, Logging
     
     using ..MeanFieldToolkit.MFTBonds: GetMFTBonds, GetBondDictionary
     using ..MeanFieldToolkit.TBMFT:TightBindingMFT
@@ -17,6 +17,7 @@ module Build
             deleteat!(tbMFT.TightBindingModel.uc.bonds, findall(startswith.(labels, "MFT =>")))
         end
 
+        @info "Building MFT Decomposed Hamiltonian..."
         for (i, InteractionBlock) in enumerate(tbMFT.InteractionBlock)
 
             labels      =   Dict{String, String}()
@@ -48,6 +49,7 @@ module Build
             deleteat!(bdgMFT.bdgModel.uc_pair.bonds, findall(startswith.(labels, "MFT =>")))
         end
 
+        @info "Building MFT Decomposed Hamiltonian..."
         for (i, InteractionBlock) in enumerate(bdgMFT.InteractionBlock)
 
             HoppingLabels      =   Dict{String, String}()

@@ -1,7 +1,7 @@
 module MFTRun
     export SolveMFT!
 
-    using FixedPointToolkit, Distributions, TightBindingToolkit
+    using FixedPointToolkit, Distributions, TightBindingToolkit, Logging
 
     using ..MeanFieldToolkit.TBMFT: TightBindingMFT
     using ..MeanFieldToolkit.BDGMFT: BdGMFT
@@ -14,6 +14,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
+        GetGap!(mft.TightBindingModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
@@ -23,6 +26,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
+        GetGap!(mft.bdgModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
@@ -33,6 +39,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
+        GetGap!(mft.TightBindingModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
@@ -42,6 +51,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
+        GetGap!(mft.bdgModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
@@ -51,6 +63,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
+        GetGap!(mft.TightBindingModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
@@ -59,6 +74,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
+        GetGap!(mft.bdgModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
@@ -67,6 +85,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
+        GetGap!(mft.TightBindingModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
@@ -75,6 +96,9 @@ module MFTRun
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
+        GetGap!(mft.bdgModel)
+
+        @info "COMPLETED!"
         return selfcons
     end
 
