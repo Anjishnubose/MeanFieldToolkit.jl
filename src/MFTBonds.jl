@@ -4,6 +4,14 @@ module MFTBonds
     using TightBindingToolkit, LinearAlgebra, Tullio
 
 
+@doc """
+```julia
+GetBondCoorelation(Gr::Array{Matrix{ComplexF64}, T}, base::Int64, target::Int64, offset::Vector{Int64}, uc::UnitCell, bz::BZ) --> Matrix{ComplexF64}
+GetBondCoorelation(Gr::Array{Matrix{ComplexF64}, T}, bond::Bond, uc::UnitCell, bz::BZ) --> Matrix{ComplexF64}
+```
+Returns the Greens function (correlations) on the given bond from the full Array in `Gr`.
+
+"""
     function GetBondCoorelation(Gr::Array{Matrix{ComplexF64}, T}, base::Int64, target::Int64, offset::Vector{Int64}, uc::UnitCell, bz::BZ) :: Matrix{ComplexF64} where {T}
         index       =   mod.((-offset) , bz.gridSize) .+ ones(Int64, length(offset)) 
         ##### TODO : the extra - sign in offset is because right now G[r] = <f^{dagger}_0 . f_{-r}> ===> NEED TO FIX THIS
@@ -25,6 +33,13 @@ module MFTBonds
     end
 
 
+@doc """
+```julia
+GetBondDictionary(BondLookup::Dict{Tuple, Matrix{ComplexF64}}, BondKey::Tuple{Int64, Int64, Vector{Int64}}, localDim::Int64) --> Dict{String, Matrix{ComplexF64}}
+```
+Given a lookup dictionary `BondLookup`, and a bond with `BondKey=(i, j, offset)`, returns a dictionary containing the effective on-site matrices as well the bond matrices on sites `i, j` and bond `i->j`.
+
+"""
     function GetBondDictionary(BondLookup::Dict{Tuple, Matrix{ComplexF64}}, BondKey::Tuple{Int64, Int64, Vector{Int64}}, localDim::Int64) :: Dict{String, Matrix{ComplexF64}}
         base, target, offset    =   BondKey
         AdjBondKey              =   (target, base, -offset)
@@ -47,7 +62,14 @@ module MFTBonds
 
     end
 
-    
+
+@doc """
+```julia
+GetMFTBonds(DecomposedBonds::Dict{String, Matrix{ComplexF64}} ; BondKey::Tuple{Int64, Int64, Vector{Int64}}, uc::UnitCell{2}, scaling::Dict{String, Float64} = Dict("ij" => 1.0, "ii" => 1.0, "jj" => 1.0), labels::Dict{String, String} = Dict("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"))
+```
+Returns a vector of `Bond` objects using the bond dictionary created by [`GetBondDictionary`][@ref]. The bond objects have `labels`, and are scaled according to `scaling`.
+
+"""
     function GetMFTBonds(DecomposedBonds::Dict{String, Matrix{ComplexF64}} ; BondKey::Tuple{Int64, Int64, Vector{Int64}}, uc::UnitCell{2}, scaling::Dict{String, Float64} = Dict("ij" => 1.0, "ii" => 1.0, "jj" => 1.0), labels::Dict{String, String} = Dict("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) :: Vector{Bond{2}} 
         
         base, target, offset = BondKey

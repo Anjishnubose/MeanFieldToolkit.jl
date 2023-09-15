@@ -4,6 +4,14 @@ module MFTEnergies
 
     using TightBindingToolkit
     #### /// TODO : Add relative scaling to energy calculation   -----> Bonds are already scaled, so dont need to do this!!!
+    
+@doc """
+```julia
+GetMFTBondEnergies(Chis::Dict{String, Matrix{ComplexF64}}, DecomposedBonds::Dict{String, Matrix{ComplexF64}}, uc::UnitCell ; scaling :: Dict{String, Float64} = Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0) ) --> Float64
+```
+Returns the mean-field energy contribution given an interaction and expectation value `Chis`. Everything is re-scaled according to `scaling`. 
+
+"""
     function GetMFTBondEnergies(Chis::Dict{String, Matrix{ComplexF64}}, DecomposedBonds::Dict{String, Matrix{ComplexF64}}, uc::UnitCell ; scaling :: Dict{String, Float64} = Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0) ) :: Float64
 
         t_ij        =   get(DecomposedBonds, "ij", zeros(ComplexF64, repeat([uc.localDim], 2)...))
