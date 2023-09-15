@@ -9,8 +9,9 @@ module Blocks
         uc          ::  UnitCell{T}
         lookup      ::  Dict{Tuple, Array{ComplexF64, T}}
 
+        ##### ///TODO Make this CreateUnitCell instead of ModifyUnitCell
         function ParamBlock(params::Vector{Param{T, R}}, uc::UnitCell{T}) where {T, R}
-            ModifyUnitCell!(uc, params)
+            CreateUnitCell!(uc, params)
             lookup  =   Lookup(uc)
             return new{T, R}(params, uc, lookup)
         end
