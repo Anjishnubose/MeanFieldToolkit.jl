@@ -42,8 +42,8 @@ module BDGMFT
 
         function BdGMFT(bdgModel::BdGModel, HoppingBlock::ParamBlock{2, R}, PairingBlock::ParamBlock{2, S}, InteractionBlock::Vector{ParamBlock{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function}, HoppingScaling::Dict{String, Float64}, PairingScaling::Dict{String, Float64} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
 
-            @assert isSameUnitCell( bdgModel.uc_hop, HoppingUC) "Inconsistency between Tight-Binding Unit Cell and hopping Expectation Unit Cell"
-            @assert isSameUnitCell(bdgModel.uc_pair, PairingUC) "Inconsistency between Pairing Unit Cell and pairing Expectation Unit Cell"
+            @assert IsSameUnitCell( bdgModel.uc_hop, HoppingUC) "Inconsistency between Tight-Binding Unit Cell and hopping Expectation Unit Cell"
+            @assert IsSameUnitCell(bdgModel.uc_pair, PairingUC) "Inconsistency between Pairing Unit Cell and pairing Expectation Unit Cell"
 
             return new{T, R, S}(bdgModel, HoppingBlock, PairingBlock, InteractionBlock, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
 
