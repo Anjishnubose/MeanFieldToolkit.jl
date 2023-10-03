@@ -48,7 +48,7 @@ Runs a single iteration of the mean-field theory on the given `MFT` object, and 
         ##### Push the new order parameters into the `HoppingOrders` attribute of the `MFT` object
         push!.( getproperty.(tbMFT.HoppingOrders, :value) , Strengths)
         ##### Recalculate the lookup table for the new order parameters
-        HoppingOrderLookup =   Lookup(tbMFT.HoppingOrders)
+        HoppingOrderLookup =   Dict{Tuple, Matrix{ComplexF64}}(Lookup(tbMFT.HoppingOrders))
         ##### Build the new MFT decomposed Hamiltonian
         BuildFromInteractions!(tbMFT, HoppingOrderLookup)
         ##### Diagonalize the Hamiltonian
@@ -72,8 +72,8 @@ Runs a single iteration of the mean-field theory on the given `MFT` object, and 
         push!.( getproperty.(bdgMFT.HoppingOrders, :value) , Strengths[begin : length(bdgMFT.HoppingOrders)])
         push!.( getproperty.(bdgMFT.PairingOrders, :value) , Strengths[length(bdgMFT.HoppingOrders) + 1 : end])
         ##### Recalculate the lookup table for the new order parameters
-        HoppingOrderLookup =   Lookup(bdgMFT.HoppingOrders)
-        PairingOrderLookup =   Lookup(bdgMFT.PairingOrders)
+        HoppingOrderLookup =   Dict{Tuple, Matrix{ComplexF64}}(Lookup(bdgMFT.HoppingOrders))
+        PairingOrderLookup =   Dict{Tuple, Matrix{ComplexF64}}(Lookup(bdgMFT.PairingOrders))
         ##### Build the new MFT decomposed Hamiltonian
         BuildFromInteractions!(bdgMFT, HoppingOrderLookup, PairingOrderLookup)
         ##### Diagonalize the Hamiltonian

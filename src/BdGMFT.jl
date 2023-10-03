@@ -51,7 +51,7 @@ BdGMFT(model::BdGModel, PairingOrders::Vector{Param{2, S}}, Interactions::Vector
         HoppingLabels           ::  Dict{String, String}
         PairingLabels           ::  Dict{String, String}
 
-
+        ##### TODO : Add a method which takes in a single decomposition function
         function BdGMFT(model::BdGModel, HoppingOrders::Vector{Param{2, R}}, PairingOrders::Vector{Param{2, S}}, Interactions::Vector{Param{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
 
             @warn "Scaling attributes not passed. Resorting to default values of uniform relative scaling for every channel!"

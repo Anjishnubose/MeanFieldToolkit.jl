@@ -31,7 +31,7 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
 """
     function SolveMFT!(mft::TightBindingMFT{T, R} ; Update::Function = SimpleMixing, Update_kwargs::Dict{Symbol, Any} = Dict{Symbol, Any}(:alpha => 0.5), max_iter::Int64 = 100, tol::Float64 = 1e-6, Initial_range::Tuple{Float64, Float64} = (-0.5, 0.5)) :: SelfCons where {T, R}
 
-        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingBlock.params)))
+        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingOrders)))
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
@@ -43,7 +43,7 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
 
     function SolveMFT!(mft::BdGMFT{T, R, R} ; Update::Function = SimpleMixing, Update_kwargs::Dict{Symbol, Any} = Dict{Symbol, Any}(:alpha => 0.5), max_iter::Int64 = 100, tol::Float64 = 1e-6, Initial_range::Tuple{Float64, Float64} = (-0.5, 0.5)) :: SelfCons where {T, R}
 
-        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingBlock.params) + length(mft.PairingBlock.params)))
+        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingOrders) + length(mft.PairingOrders)))
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
@@ -56,7 +56,7 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
 
     function SolveMFT!(mft::TightBindingMFT{T, R}, fileName::String ; Update::Function = SimpleMixing, Update_kwargs::Dict{Symbol, Any} = Dict{Symbol, Any}(:alpha => 0.5), max_iter::Int64 = 100, tol::Float64 = 1e-6, checkpoint_interval::Int64 = 50, Initial_range::Tuple{Float64, Float64} = (-0.5, 0.5)) :: SelfCons where {T, R}
 
-        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingBlock.params)))
+        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingOrders)))
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
@@ -68,7 +68,7 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
 
     function SolveMFT!(mft::BdGMFT{T, R, R}, fileName::String ; Update::Function = SimpleMixing, Update_kwargs::Dict{Symbol, Any} = Dict{Symbol, Any}(:alpha => 0.5), max_iter::Int64 = 100, tol::Float64 = 1e-6, checkpoint_interval::Int64 = 50, Initial_range::Tuple{Float64, Float64} = (-0.5, 0.5)) :: SelfCons where {T, R}
 
-        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingBlock.params) + length(mft.PairingBlock.params)))
+        Initial     =   R.(rand(Uniform(Initial_range...), length(mft.HoppingOrders) + length(mft.PairingOrders)))
         selfcons    =   SelfCons(MFTIterator, Update, Initial ; F_args = (mft , ), Update_kwargs = Update_kwargs)
         
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
