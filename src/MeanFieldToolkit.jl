@@ -12,10 +12,6 @@ module MeanFieldToolkit
     using .MFTEnergies
     export GetMFTBondEnergies
 
-    include("Blocks.jl")
-    using .Blocks
-    export ParamBlock, UpdateBlock!, GetAllBondParams
-
     include("TightBindingMFT.jl")
     using .TBMFT
     export TightBindingMFT, GetMFTEnergy
@@ -38,7 +34,7 @@ module MeanFieldToolkit
 
     include("MFTResume.jl")
     using .MFTResume
-    export ResumeMFT!
+    export ResumeMFT!, ReadMFT
 
     include("MFTPlot.jl")
     using .MFTPlot
