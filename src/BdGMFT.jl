@@ -68,25 +68,25 @@ BdGMFT(model::BdGModel, PairingOrders::Vector{Param{2, S}}, Interactions::Vector
 
         end
 
-        function BdGMFT(model::BdGModel, PairingOrders::Vector{Param{2, S}}, Interactions::Vector{Param{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
+        function BdGMFT(model::BdGModel, PairingOrders::Vector{Param{2, S}}, Interactions::Vector{Param{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, S <: Union{Float64, ComplexF64}}
 
             @warn "No Hopping Order parameters passed."
-            HoppingOrders       =   Param{2, Float64}[]
+            HoppingOrders       =   Param{2, S}[]
 
             @warn "Scaling attributes not passed. Resorting to default values of uniform relative scaling for every channel!"
             HoppingScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0)
             PairingScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0)
 
-            return new{T, R, S}(model, HoppingOrders, PairingOrders, Interactions, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
+            return new{T, S, S}(model, HoppingOrders, PairingOrders, Interactions, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
 
         end
 
-        function BdGMFT(model::BdGModel, PairingOrders::Vector{Param{2, S}}, Interactions::Vector{Param{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function}, HoppingScaling::Dict{String, Float64}, PairingScaling::Dict{String, Float64} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, R <: Union{Float64, ComplexF64}, S <: Union{Float64, ComplexF64}}
+        function BdGMFT(model::BdGModel, PairingOrders::Vector{Param{2, S}}, Interactions::Vector{Param{T, Float64}} , HoppingDecomposition::Vector{Function}, PairingDecomposition::Vector{Function}, HoppingScaling::Dict{String, Float64}, PairingScaling::Dict{String, Float64} ; HoppingLabels::Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"), PairingLabels::Dict{String, String} = Dict{String, String}("ij" => "Pairing", "ii" => "Pairing On-Site", "jj" => "Pairing On-Site")) where {T, S <: Union{Float64, ComplexF64}}
 
             @warn "No Hopping Order parameters passed."
-            HoppingOrders       =   Param{2, Float64}[]
+            HoppingOrders       =   Param{2, S}[]
 
-            return new{T, R, S}(model, HoppingOrders, PairingOrders, Interactions, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
+            return new{T, S, S}(model, HoppingOrders, PairingOrders, Interactions, HoppingDecomposition, PairingDecomposition, Float64[], HoppingScaling, PairingScaling, HoppingLabels, PairingLabels)
 
         end
 
