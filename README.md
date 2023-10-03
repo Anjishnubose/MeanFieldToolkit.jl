@@ -11,3 +11,7 @@ Currently supported :
 * Self-consistentcy solver is implemented using [FixedPointToolkit.jl](https://github.com/Anjishnubose/FixedPointToolkit.jl). Can customize the solver, the tolerance of convergence, the maximum number of iterations and so on.
 * Can checkpoint and save results into JLD2 files, and resume iterations from reading such files.
 * Can plot results of order parameters, and the mean-field ground state energy as a function of iterations.
+
+# Documentation
+
+For further details, please refer to the [Documentation](https://anjishnubose.github.io/MeanFieldToolkit.jl/dev/).
