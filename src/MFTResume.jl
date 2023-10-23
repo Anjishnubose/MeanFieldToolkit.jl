@@ -43,7 +43,7 @@ Returns a dictionary containing the following keys:
 
         f   =   read_checkpoint(fileName)
 
-        return Dict("Convergence" => norm(f["inputs"][end] - f["outputs"][end]),
+        return Dict("Convergence" => norm(f["inputs"][end] - f["outputs"][end]) / sqrt(length(f["inputs"][end])),
                     "Expectations" => f["outputs"][end],
                     "Iterations" => length(f["inputs"]),
                     "MFT" => f["function args"][1])
