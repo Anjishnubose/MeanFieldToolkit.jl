@@ -1,7 +1,7 @@
 module MFTRun
     export SolveMFT!
 
-    using FixedPointToolkit, Distributions, TightBindingToolkit, Logging
+    using FixedPointToolkit, Distributions, TightBindingToolkit, Logging, LinearAlgebra
 
     using ..MeanFieldToolkit.TBMFT: TightBindingMFT
     using ..MeanFieldToolkit.BDGMFT: BdGMFT
@@ -37,7 +37,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
@@ -49,7 +50,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
@@ -62,7 +64,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
@@ -74,7 +77,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
@@ -86,7 +90,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
@@ -97,7 +102,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons ; max_iter = max_iter, tol = tol)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
@@ -108,7 +114,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
@@ -119,7 +126,8 @@ Solves the mean-field theory on the given `MFT` object, and returns the `SelfCon
         FixedPoint!(selfcons, fileName ; max_iter = max_iter, tol = tol, checkpoint_interval = checkpoint_interval)
         GetGap!(mft.model)
 
-        @info "COMPLETED!"
+        convergence     =   norm(selfcons.VOuts[end] - selfcons.VIns[end]) / sqrt(length(selfcons.VOuts[end]))
+        @info "COMPLETED with convergence = $(convergence)!"
         return selfcons
     end
 
