@@ -3,7 +3,7 @@ module Build
     export BuildFromInteractions!
 
     using LinearAlgebra, TightBindingToolkit, Logging
-    
+
     using ..MeanFieldToolkit.MFTBonds: GetMFTBonds, GetBondDictionary
     using ..MeanFieldToolkit.TBMFT:TightBindingMFT
     using ..MeanFieldToolkit.BDGMFT:BdGMFT
@@ -35,13 +35,14 @@ If `refresh` is set to `true`, then the MFT bonds are deleted and rebuilt from s
             end
             ##### Interaction lookup table
             lookup      =   Lookup([Interaction])
+            scaling = get(tbMFT.MFTScaling, Interaction.label, tbMFT.MFTScaling)
             ##### iterating over each bond in the lookup table, getting the expectation value, and decomposing the interaction using the MFT decomposition function
             for BondKey in keys(lookup)
-                
+
                 Expectations        =   GetBondDictionary(HoppingOrderLookup, BondKey, tbMFT.model.uc.localDim) ##### Pass Expectation value lookup into this function
                 Decomposed          =   tbMFT.MFTDecomposition[i](lookup[BondKey] , Expectations)
 
-                MFTBonds            =   GetMFTBonds(Decomposed ; BondKey = BondKey, uc = tbMFT.model.uc, scaling = tbMFT.MFTScaling, labels = labels)
+                MFTBonds            =   GetMFTBonds(Decomposed ; BondKey = BondKey, uc = tbMFT.model.uc, scaling = Dict{String, Any}(scaling), labels = labels)
                 append!(tbMFT.model.uc.bonds, MFTBonds)
 
             end
@@ -73,7 +74,7 @@ If `refresh` is set to `true`, then the MFT bonds are deleted and rebuilt from s
             lookup      =   Lookup([Interaction])
             ##### iterating over each bond in the lookup table, getting the expectation values (hopping and pairing), and decomposing the interaction using the MFT decomposition function
             for BondKey in keys(lookup)
-            
+
                 HoppingExpectations =   GetBondDictionary(HoppingOrderLookup, BondKey, bdgMFT.model.uc_hop.localDim)
                 PairingExpectations =   GetBondDictionary(PairingOrderLookup, BondKey, bdgMFT.model.uc_pair.localDim)
 

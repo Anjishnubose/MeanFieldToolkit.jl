@@ -18,13 +18,13 @@ module TBMFT
 - `MFTScaling         ::  Dict{String, Float64}`: relative scaling parameters for different mean-field channels.
 - `ChannelLabels      ::  Dict{String, String}`: The labels of the different mean-field channels.
 
-Initialize this structure using 
+Initialize this structure using
 ```julia
 TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}}, MFTDecomposition::Vector{Function} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"))
 TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}}, MFTDecomposition::Vector{Function}, MFTScaling::Dict{String, Float64} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site"))
 ```
 """
-    mutable struct TightBindingMFT{T, R} 
+    mutable struct TightBindingMFT{T, R}
         ##### TightBinding Model for MFT
         model               ::  Model
         ##### Vector of Params containing the expected order parameters of MFT
@@ -35,7 +35,7 @@ TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::
         ##### The MFT expectation value of the full interacting Hamiltonian
         MFTEnergy           ::  Vector{Float64}
         ##### The relative scaling b/w different MFT channels
-        MFTScaling          ::  Dict{String, Float64}
+        MFTScaling          ::  Dict{String, Any}
         ##### The user defined labels of the different MFT channels
         ChannelLabels       ::  Dict{String, String}
 
@@ -43,12 +43,12 @@ TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::
         function TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}} , MFTDecomposition::Vector{Function} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
             @warn "`MFTScaling` attribute not passed. Resorting to default values of uniform relative scaling for every channel!"
-            MFTScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0) 
+            MFTScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0)
 
             return new{T, R}(model, HoppingOrders, Interactions, MFTDecomposition, Float64[], MFTScaling, ChannelLabels)
         end
 
-        function TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}}, MFTDecomposition::Vector{Function}, MFTScaling::Dict{String, Float64} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
+        function TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}}, MFTDecomposition::Vector{Function}, MFTScaling::Dict{String, Any} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
             return new{T, R}(model, HoppingOrders, Interactions, MFTDecomposition, Float64[], MFTScaling, ChannelLabels)
         end
@@ -56,12 +56,12 @@ TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::
         function TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}} , MFTDecomposition::Function ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
             @warn "`MFTScaling` attribute not passed. Resorting to default values of uniform relative scaling for every channel!"
-            MFTScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0) 
+            MFTScaling      =   Dict{String, Float64}("ij" => 1.0, "ii" => 1.0, "jj" => 1.0)
 
             return new{T, R}(model, HoppingOrders, Interactions, repeat(Function[MFTDecomposition], length(Interactions)), Float64[], MFTScaling, ChannelLabels)
         end
 
-        function TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}}, MFTDecomposition::Function, MFTScaling::Dict{String, Float64} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
+        function TightBindingMFT(model::Model, HoppingOrders::Vector{Param{2, R}}, Interactions::Vector{Param{T, Float64}}, MFTDecomposition::Function, MFTScaling::Dict{String, Any} ; ChannelLabels :: Dict{String, String} = Dict{String, String}("ij" => "Hopping", "ii" => "Hopping On-Site", "jj" => "Hopping On-Site")) where {T, R <: Union{Float64, ComplexF64}}
 
             return new{T, R}(model, HoppingOrders, Interactions, repeat(Function[MFTDecomposition], length(Interactions)), Float64[], MFTScaling, ChannelLabels)
         end
@@ -77,7 +77,7 @@ Returns the total mean-field energy of the model including decomposed interactio
 
 """
     function GetMFTEnergy(tbMFT::TightBindingMFT{T, R}) :: Float64 where {T, R}
-        ##### /// TODO: Add Free Hopping energies also 
+        ##### /// TODO: Add Free Hopping energies also
         ##### /// TODO: Test!!!!
 
         Energy      =   0.0
